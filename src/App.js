@@ -1,25 +1,47 @@
-import logo from './logo.svg';
+import React , {Component} from 'react';
+//import logo from './logo.svg';
 import './App.css';
+import {CardList } from './components/card-list/card-list-components';
+import {SearchBox} from './components/search-box/search-box-component';
 
-function App() {
-  return (
+class App extends Component{
+  constructor(){
+    super();
+    this.state = {
+     coder : [],
+     searchField:''
+    };
+
+    this.handlechange = this.handlechange.bind(this);
+    
+  }
+
+  componentDidMount(){
+    fetch('https://jsonplaceholder.typicode.com/users')
+    .then(response => response.json()
+    .then(users => this.setState({coder:users}) )
+    )
+  }
+
+   handlechange =(e) => {
+    this.setState({searchField: e.target.value});
+   }
+
+
+  render(){
+    const {coder, searchField} = this.state;
+    const filteratedCoder = coder.filter(coder =>
+       coder.name.toLowerCase().includes(searchField.toLowerCase())
+      );
+    return(
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+      <h1>Active Programmer</h1>
+      <SearchBox  placeholder='name'
+      handlechange= {this.handlechange} />
+      <CardList coder={filteratedCoder}>   
+     </CardList>
+  
+  </div>)
+  }
 }
-
 export default App;
